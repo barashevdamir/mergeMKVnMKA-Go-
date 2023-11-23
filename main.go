@@ -1,16 +1,26 @@
-package mergeMKVnMKA
-
 package main
 
 import (
-"bufio"
-"fmt"
-"os"
-"os/exec"
-"path/filepath"
-"sort"
-"strings"
+	"bufio"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"sort"
+	"strings"
 )
+
+func ReadFiles(folder string, ext string) ([]string, error) {
+	var files []string
+	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ext) {
+			files = append(files, info.Name())
+		}
+		return nil
+	})
+	sort.Strings(files)
+	return files, err
+}
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
@@ -57,16 +67,4 @@ func main() {
 	}
 
 	fmt.Println("Объединение файлов завершено.")
-}
-
-func ReadFiles(folder string, ext string) ([]string, error) {
-	var files []string
-	err := filepath.Walk(folder, func(path string, info os.FileInfo, err error) error {
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ext) {
-			files = append(files, info.Name())
-		}
-		return nil
-	})
-	sort.Strings(files)
-	return files, err
 }
